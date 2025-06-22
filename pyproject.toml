@@ -1,0 +1,12 @@
+[project]
+name = "nature-finance-rag-api"
+version = "0.0.1"
+description = "Nature Finance CCDR Explorer database and semantic search API setup scripts"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.3.1",
+    "pydantic>=2.11.7",
+    "python-dotenv>=1.1.0",
+    "sqlmodel>=0.0.24",
+]
