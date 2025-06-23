@@ -158,21 +158,21 @@ erDiagram
         int id PK
         int document_id FK
         NodeType node_type
-        TagName tag_name nullable "The HTML tag name of the node if it is an element node"
-        SectionType section_type nullable "The semantic section type of the node if it is a section element"
-        int parent_id FK nullable "The ID of the parent node"
+        TagName tag_name "The HTML tag name of the node if it is an element node (nullable)"
+        SectionType section_type "The semantic section type of the node if it is a section element (nullable)"
+        int parent_id FK "The ID of the parent node (nullable)"
         int sequence_in_parent "The sequence number of the node within its parent"
-        jsonb positional_data "[{page_pdf: int, page_logical: int, bbox: {x1: float, y1: float, x2: float, y2: float}}, ...]" "JSONB array of positional data for the PDF blocks that make up the node"
+        jsonb positional_data "JSONB array of positional data for the PDF blocks that make up the node"
     }
 
     %% Content Data (1:1 with content-bearing nodes)
     CONTENT_DATA {
         int id PK
         int node_id FK
-        text text_content nullable
-        string storage_url nullable
-        string description nullable
-        string caption nullable
+        text text_content "Text content of the node (nullable)"
+        string storage_url "URL to stored content like images (nullable)"
+        string description "AI-generated description for complex content (nullable)"
+        string caption "Original caption text (nullable)"
         EmbeddingSource embedding_source
     }
 
