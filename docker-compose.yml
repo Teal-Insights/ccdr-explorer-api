@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: postgres.Dockerfile
     environment:
-      POSTGRES_DB: nature-finance-rag-db
+      POSTGRES_DB: ccdr-explorer-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:

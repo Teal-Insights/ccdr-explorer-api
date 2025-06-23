@@ -8,7 +8,7 @@ def get_database_url():
     password = os.getenv("POSTGRES_PASSWORD", "postgres")
     host = os.getenv("POSTGRES_HOST", "localhost")
     port = os.getenv("POSTGRES_PORT", "5432")
-    db = os.getenv("POSTGRES_DB", "nature-finance-rag-db")
+    db = os.getenv("POSTGRES_DB", "ccdr-explorer-db")
     return f"postgresql://{user}:{password}@{host}:{port}/{db}"
 
 
