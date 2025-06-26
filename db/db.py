@@ -15,6 +15,7 @@ def get_database_url():
 # Create database engine
 engine = create_engine(get_database_url())
 
+
 # Create all tables
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
