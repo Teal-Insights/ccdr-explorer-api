@@ -1,0 +1,71 @@
+---
+description: Digital Ocean database setup
+globs: 
+alwaysApply: false
+---
+## Install `doctl` CLI
+
+In Ubuntu: `sudo snap install doctl`
+
+## Get an API token
+
+From the Digital Ocean applications page, select "API" from the left menu. Generate an API key with the read and write permissions you want. Copy the API key to your clipboard, as you will need it in the next step.
+
+## Authenticate the CLI
+
+To create an auth context in the CLI:
+
+```bash
+export CONTEXT_NAME="your-auth-context-name"
+doctl auth init --context $CONTEXT_NAME
+# Enter your API key when prompted
+```
+
+Then, to select the auth context you created:
+
+```bash
+doctl auth switch --context $CONTEXT_NAME
+```
+
+## Create a project
+
+If you haven't created a project yet, you can create one with `doctl`:
+
+```bash
+export PROJECT_NAME="your-project-name"
+export PROJECT_PURPOSE="your project description"
+doctl projects create --name $PROJECT_NAME --purpose $PROJECT_PURPOSE --environment "Production"
+```
+
+## Create a managed PostgreSQL serverless database
+
+```bash
+export DATABASE_NAME="db-name"
+doctl databases create $DATABASE_NAME --engine pg --version 17 --size db-s-1vcpu-1gb --num-nodes 1 --wait
+```
+
+This will print a database ID and connection URL to the console. To get connection details in a friendlier format, use:
+
+```bash
+export DATABASE_ID="id-printed-after-database-create-step"
+doctl databases connection $DATABASE_ID --format Host,Port,User,Password,Database
+```
+
+## Assign the database to your project
+
+```bash
+export PROJECT_ID="id-printed-after-project-create-step"
+doctl projects resources assign $PROJECT_ID --resource=do:dbaas:$DATABASE_ID
+```
+
+## Set up a firewall rule (optional)
+
+Note that by default your database is publicly accessible from the Internet, so ideally you should create a firewall rule to restrict access to only your application's IP address once you have deployed the application. The command to do this is:
+
+```bash
+doctl databases firewalls append <database-cluster-id> --rule <type>:<value>
+```
+
+where <type> is ip_addr and <value> is the IP address of the application server. See the DigitalOcean documentation for more details.
+
+Note: You can only complete this step after you have deployed your application layer and obtained a static IP address for the application server.
