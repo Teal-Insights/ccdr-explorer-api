@@ -74,45 +74,37 @@ erDiagram
         string ELEMENT_NODE
     }
 
-    %% ENUM: TagName
-    TagName {
-        string HEADER
-        string MAIN
-        string FOOTER
-        string FIGURE
-        string FIGCAPTION
-        string TABLE
-        string TH
-        string TR
-        string TD
-        string CAPTION
-        string TITLE
-        string SECTION
-        string NAV
-        string ASIDE
-        string P
-        string UL
-        string OL
-        string LI
-        string H1
-        string H2
-        string H3
-        string H4
-        string H5
-        string H6
-        string I
-        string B
-        string U
-        string S
-        string SUP
-        string SUB
-        string A
-        string IMG
-        string MATH
-        string CODE
-        string CITE
-        string BLOCKQUOTE
-    }
+class TagName(str, Enum):
+    # Only structural elements
+    HEADER = "header"
+    MAIN = "main"
+    FOOTER = "footer"
+    FIGURE = "figure"
+    FIGCAPTION = "figcaption"
+    TABLE = "table"
+    TH = "th"
+    TR = "tr"
+    TD = "td"
+    CAPTION = "caption"
+    TITLE = "title"
+    SECTION = "section"
+    NAV = "nav"
+    ASIDE = "aside"
+    P = "p"
+    UL = "ul"
+    OL = "ol"
+    LI = "li"
+    H1 = "h1"
+    H2 = "h2"
+    H3 = "h3"
+    H4 = "h4"
+    H5 = "h5"
+    H6 = "h6"
+    IMG = "img"
+    MATH = "math"
+    CODE = "code"
+    CITE = "cite"
+    BLOCKQUOTE = "blockquote"
 
     %% ENUM: SectionType
     SectionType {
