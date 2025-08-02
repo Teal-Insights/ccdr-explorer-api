@@ -49,10 +49,10 @@ def drop_main_tables():
     execute_sql_commands(commands)
 
 def drop_enums():
-    """Drop all enum types."""
-    print("\n3️⃣  Dropping existing enums...")
+    """Drop only enum types used by tables being recreated."""
+    print("\n3️⃣  Dropping enums used by Node/ContentData/Relation/Embedding tables...")
     commands = [
-        "DROP TYPE IF EXISTS documenttype CASCADE;",
+        # DocumentType is NOT dropped - it's used by Document table which is preserved
         "DROP TYPE IF EXISTS nodetype CASCADE;",
         "DROP TYPE IF EXISTS tagname CASCADE;",
         "DROP TYPE IF EXISTS sectiontype CASCADE;",
@@ -77,20 +77,21 @@ def print_summary():
     """Print migration summary."""
     print("\n✅ Schema update completed successfully!")
     print("📊 Summary:")
-    print("   ✓ Enums: Dropped and recreated")
+    print("   ✓ Node-related enums: Dropped and recreated")
+    print("   ✓ DocumentType enum: Preserved (used by Document table)")
     print("   ✓ Node table: Dropped and recreated")
     print("   ✓ ContentData table: Dropped and recreated") 
     print("   ✓ Relation table: Dropped and recreated")
     print("   ✓ Embedding table: Dropped and recreated")
     print("   ✓ Publication table: Preserved")
-    print("   ✓ Document table: Preserved")
+    print("   ✓ Document table: Preserved (including type column)")
 
 def main():
     """Main function to drop and recreate schema components."""
     
     print("🗄️  Starting database schema update...")
-    print("📋 This will drop and recreate: enums, Node, ContentData, Relation, Embedding tables")
-    print("💾 Publication and Document tables will be preserved")
+    print("📋 This will drop and recreate: Node-related enums, Node, ContentData, Relation, Embedding tables")
+    print("💾 Publication and Document tables (and DocumentType enum) will be preserved")
     
     # Validate database connection
     try:
