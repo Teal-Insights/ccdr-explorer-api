@@ -5,6 +5,7 @@ description = "Nature Finance CCDR Explorer database and semantic search API set
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "bs4>=0.0.2",
     "numpy>=2.3.1",
     "psycopg2-binary>=2.9.10",
     "pydantic>=2.11.7",
