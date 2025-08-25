@@ -17,7 +17,7 @@ For `TEXT_NODE`s and `img`-typed `ELEMENT_NODE`s, we will have a corresponding r
 Our design is guided by four key principles:
 
 * **DOM Alignment for Easy Ingestion:** Our schema closely mirrors the HTML DOM structure, making it straightforward to convert parsed HTML into our database representation and vice versa.
-* **Unified Node Structure:** Both element nodes and text nodes are represented in a single `NODE` table, with type discrimination via the `node_type` field. This maintains the natural hierarchy of the DOM while keeping the schema simple.
+* **Unified Node Structure:** Nodes are represented in a single `NODE` table. We rely on `tag_name` to represent the HTML element type.
 * **Explicit Relationship Modeling:** Beyond the hierarchical parent-child relationships inherent in the DOM, a dedicated `RELATION` table defines semantic connections (the "edges") between nodes, such as footnote references and cross-references.
 * **Semantic Enrichment:** We enhance the basic DOM structure with semantic section types and positional data that enable advanced RAG capabilities.
 * **Performance:** The unified node structure with proper indexing ensures efficient tree traversal and relationship lookups.
@@ -68,11 +68,6 @@ erDiagram
         string version "Version of the document"
     }
 
-    %% ENUM: NodeType
-    NodeType {
-        string TEXT_NODE
-        string ELEMENT_NODE
-    }
 
 class TagName(str, Enum):
     # Only structural elements
@@ -149,8 +144,7 @@ class TagName(str, Enum):
     NODE {
         int id PK
         int document_id FK
-        NodeType node_type
-        TagName tag_name "The HTML tag name of the node if it is an element node (nullable)"
+        TagName tag_name "The HTML tag name of the node"
         SectionType section_type "The semantic section type of the node if it is a section element (nullable)"
         int parent_id FK "The ID of the parent node (nullable)"
         int sequence_in_parent "The sequence number of the node within its parent"
@@ -199,7 +193,7 @@ class TagName(str, Enum):
     classDef enumType fill:#ffe6e6,stroke:#ff4757
     classDef mainTable fill:#e6f3ff,stroke:#0066cc
 
-    class DocumentType,NodeType,TagName,SectionType,RelationType,EmbeddingSource enumType
+    class DocumentType,TagName,SectionType,RelationType,EmbeddingSource enumType
     class PUBLICATION,DOCUMENT,NODE,CONTENT_DATA,RELATION,EMBEDDING mainTable
 ```
 
@@ -207,7 +201,7 @@ class TagName(str, Enum):
 
 * **DOM-Centric Design:**
     * **HTML Tags as Schema Elements:** We limit the LLM to a controlled vocabulary of HTML tags that map directly to our `TagName` enum. This ensures consistent structure and prevents the generation of unsupported markup.
-    * **Unified Node Table:** Both element nodes and text nodes are stored in the same `NODE` table, with the `node_type` field distinguishing between them. This mirrors the DOM structure and simplifies traversal operations.
+    * **Unified Node Table:** All nodes are stored in the same `NODE` table; the `tag_name` field identifies the element type.
     * **Content Separation:** Actual content (text, images, descriptions) is stored in a separate `CONTENT_DATA` table, maintaining a clean separation between structure and content.
 
 * **Positional Data and Page Mapping:**
@@ -272,8 +266,7 @@ This DOM-based schema enables sophisticated RAG operations:
 ### NODE Table
 | HTML Element/Attribute        | DB Field            | Notes                              |
 |-------------------------------|---------------------|------------------------------------|
-| DOM node type                 | `node_type`         | TEXT_NODE or ELEMENT_NODE          |
-| HTML tag name                 | `tag_name`          | Maps to TagName enum               |
+| HTML tag name                 | `tag_name`          | Maps to TagName enum (NOT NULL)    |
 | `data-section-type`           | `section_type`      | Maps to SectionType enum           |
 | Parent element                | `parent_id`         | FK to parent node                  |
 | DOM order                     | `sequence_in_parent`| Child index within parent          |
