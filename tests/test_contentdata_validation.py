@@ -48,44 +48,60 @@ def create_pub_doc(session: Session):
 def test_description_allowed_for_img(session=None):
     with Session(engine) as session:
         doc = create_pub_doc(session)
-        node = Node(
-            document=doc,
-            tag_name=TagName.IMG,
-            sequence_in_parent=0,
-        )
-        session.add(node)
-        session.flush()
-        content = ContentData(
-            node=node,
-            text_content=None,
-            storage_url="https://example.com/img.png",
-            description="alt text",
-            caption=None,
-            embedding_source=EmbeddingSource.DESCRIPTION,
-        )
-        session.add(content)
-        session.commit()
+        pub_id = doc.publication.id
+        try:
+            node = Node(
+                document=doc,
+                tag_name=TagName.IMG,
+                sequence_in_parent=0,
+            )
+            session.add(node)
+            session.flush()
+            content = ContentData(
+                node=node,
+                text_content=None,
+                storage_url="https://example.com/img.png",
+                description="alt text",
+                caption=None,
+                embedding_source=EmbeddingSource.DESCRIPTION,
+            )
+            session.add(content)
+            session.commit()
+        finally:
+            pub = session.get(Publication, pub_id)
+            if pub is not None:
+                session.delete(pub)
+                session.commit()
 
 
 def test_description_rejected_for_paragraph(session=None):
     with Session(engine) as session:
         doc = create_pub_doc(session)
-        node = Node(
-            document=doc,
-            tag_name=TagName.P,
-            sequence_in_parent=0,
-        )
-        session.add(node)
-        session.flush()
-        content = ContentData(
-            node=node,
-            text_content="Hello",
-            description="should fail",
-            caption=None,
-            embedding_source=EmbeddingSource.TEXT_CONTENT,
-        )
-        session.add(content)
-        with pytest.raises(ValueError):
-            session.commit()
+        pub_id = doc.publication.id
+        try:
+            node = Node(
+                document=doc,
+                tag_name=TagName.P,
+                sequence_in_parent=0,
+            )
+            session.add(node)
+            session.flush()
+            content = ContentData(
+                node=node,
+                text_content="Hello",
+                description="should fail",
+                caption=None,
+                embedding_source=EmbeddingSource.TEXT_CONTENT,
+            )
+            session.add(content)
+            with pytest.raises(ValueError):
+                session.commit()
+        finally:
+            # Ensure session is clean, then delete the created Publication (cascades to dependents)
+            session.rollback()
+            pub = session.get(Publication, pub_id)
+            if pub is not None:
+                session.delete(pub)
+                session.commit()
 
 
