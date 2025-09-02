@@ -7,8 +7,9 @@ from sqlmodel import Field, Relationship, SQLModel, Column
 from sqlalchemy import event
 from sqlalchemy.orm import Session as SASession
 from pydantic import HttpUrl, field_validator
-from sqlalchemy.dialects.postgresql import ARRAY, FLOAT, JSONB
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped
+from pgvector.sqlalchemy import Vector
 
 
 def list_to_ranges(nums):
@@ -607,7 +608,7 @@ class Embedding(SQLModel, table=True):
     content_data_id: Optional[int] = Field(
         default=None, foreign_key="contentdata.id", index=True, ondelete="CASCADE"
     )
-    embedding_vector: List[float] = Field(sa_column=Column(ARRAY(FLOAT)))
+    embedding_vector: List[float] = Field(sa_column=Column(Vector(1536)))
     model_name: str = Field(max_length=100)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
