@@ -1,9 +1,10 @@
 from datetime import date, datetime, UTC
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Iterable
 from html import escape
 from bs4 import BeautifulSoup
 from enum import Enum
 from sqlmodel import Field, Relationship, SQLModel, Column
+from sqlmodel import Session
 from sqlalchemy import event
 from sqlalchemy.orm import Session as SASession
 from pydantic import HttpUrl, field_validator
@@ -374,7 +375,7 @@ class Node(SQLModel, table=True):
         self,
         *,
         include_citation_data: bool = False,
-        is_top_level: bool = False,
+        is_top_level: bool = True,
         separator: str = "\n",
         pretty: bool = True,
     ) -> str:
@@ -497,6 +498,161 @@ class Node(SQLModel, table=True):
                     parts.append(str(child))
             return "".join(parts)
         return result
+
+    def nearest_ancestor_with_tag(
+        self,
+        *,
+        tag_names: Iterable[TagName] = (TagName.SECTION,),
+    ) -> Optional["Node"]:
+        """Return the closest ancestor whose tag is in tag_names.
+
+        If no matching ancestor exists, returns None.
+        """
+        current: Optional["Node"] = self
+        wanted = set(tag_names)
+        # Start from the current node's parent
+        current = current.parent if current is not None else None
+        while current is not None:
+            if current.tag_name in wanted:
+                return current
+            current = current.parent
+        return None
+
+    @classmethod
+    def render_containing_parent_html(
+        cls,
+        session: Session,
+        node_id: int,
+        *,
+        container_tags: Iterable[TagName] = (TagName.SECTION,),
+        include_citation_data: bool = True,
+        pretty: bool = True,
+        separator: str = "\n",
+    ) -> Optional[str]:
+        """Render the HTML for the nearest containing parent and its subtree.
+
+        Typical usage is to render the entire <section> a paragraph belongs to.
+
+        - If a container ancestor is found (matching container_tags), that node's
+          subtree is rendered.
+        - If none is found, the original node's subtree is rendered as a fallback.
+        - Returns None when node_id does not exist.
+        """
+        node: Optional["Node"] = session.get(cls, node_id)
+        if node is None:
+            return None
+
+        # Attempt to find the nearest ancestor with the desired tag(s).
+        # Because relationships are lazy-loaded, walking via attributes is fine
+        # as long as we stay within this session.
+        current: Optional["Node"] = node.parent
+        wanted = set(container_tags)
+        container: Optional["Node"] = None
+        while current is not None:
+            if current.tag_name in wanted:
+                container = current
+                break
+            current = current.parent
+
+        target: "Node" = container or node
+        return target.to_html(
+            include_citation_data=include_citation_data,
+            is_top_level=True,
+            separator=separator,
+            pretty=pretty,
+        )
+
+    @classmethod
+    def render_context_html(
+        cls,
+        session: Session,
+        node_id: int,
+        *,
+        include_citation_data: bool = True,
+        pretty: bool = True,
+        separator: str = "\n",
+    ) -> Optional[str]:
+        """Render a human-meaningful context container for a node.
+
+        Heuristics:
+        - TD/TH/TR/THEAD/TBODY/TFOOT/CAPTION -> TABLE
+        - FIGCAPTION/IMG -> FIGURE (fallback SECTION)
+        - LI -> UL or OL
+        - Default text/heading/code/cite/blockquote -> nearest of SECTION/ASIDE/NAV
+        - In all cases, if those are absent, fallback to MAIN/HEADER/FOOTER
+        - If the node itself is a container (SECTION, ASIDE, NAV, FIGURE, TABLE, UL, OL),
+          render that node directly.
+        """
+        node: Optional["Node"] = session.get(cls, node_id)
+        if node is None:
+            return None
+
+        tag = node.tag_name
+        # If this node already represents a suitable container, render it directly
+        direct_container_tags = {
+            TagName.SECTION,
+            TagName.ASIDE,
+            TagName.NAV,
+            TagName.FIGURE,
+            TagName.TABLE,
+            TagName.UL,
+            TagName.OL,
+        }
+        if tag in direct_container_tags:
+            return node.to_html(
+                include_citation_data=include_citation_data,
+                is_top_level=True,
+                separator=separator,
+                pretty=pretty,
+            )
+
+        # Heuristic container mapping
+        if tag in {TagName.TD, TagName.TH, TagName.TR, TagName.THEAD, TagName.TBODY, TagName.TFOOT, TagName.CAPTION}:
+            preferred_containers = (
+                TagName.TABLE,
+                TagName.SECTION,
+                TagName.MAIN,
+                TagName.HEADER,
+                TagName.FOOTER,
+            )
+        elif tag in {TagName.FIGCAPTION, TagName.IMG}:
+            preferred_containers = (
+                TagName.FIGURE,
+                TagName.SECTION,
+                TagName.MAIN,
+                TagName.HEADER,
+                TagName.FOOTER,
+            )
+        elif tag == TagName.LI:
+            preferred_containers = (
+                TagName.UL,
+                TagName.OL,
+                TagName.SECTION,
+                TagName.MAIN,
+                TagName.HEADER,
+                TagName.FOOTER,
+            )
+        else:
+            # Paragraphs, headings, code, cite, blockquote, etc.
+            preferred_containers = (
+                TagName.FIGURE,
+                TagName.TABLE,
+                TagName.SECTION,
+                TagName.ASIDE,
+                TagName.NAV,
+                TagName.MAIN,
+                TagName.HEADER,
+                TagName.FOOTER,
+            )
+
+        return cls.render_containing_parent_html(
+            session,
+            node_id,
+            container_tags=preferred_containers,
+            include_citation_data=include_citation_data,
+            pretty=pretty,
+            separator=separator,
+        )
 
 
 class ContentData(SQLModel, table=True):
