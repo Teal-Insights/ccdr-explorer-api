@@ -1,8 +1,8 @@
 # services/semantic_search.py
-from typing import Iterable, List, Optional, Tuple, TypedDict
+from typing import Iterable, List, Optional, Tuple, TypedDict, Union
 from sqlmodel import Session, select
 from sqlalchemy import text
-from db.schema import Node
+from db.schema import Node, ISO3Country, GeoAggregate
 
 class SearchResult(TypedDict):
     node_id: int
@@ -29,7 +29,8 @@ def semantic_search_nodes(
     publication_ids: Optional[Iterable[int]] = None,
     tag_names: Optional[Iterable[str]] = None,           # values from TagName enum
     section_types: Optional[Iterable[str]] = None,       # values from SectionType enum
-    include_citation_data: bool = True
+    include_citation_data: bool = True,
+    geographies: Optional[Iterable[Union[str, ISO3Country, GeoAggregate]]] = None,
 ) -> List[SearchResult]:
     qvec = embed_query(query_text, model=model_name)
 
@@ -48,12 +49,14 @@ def semantic_search_nodes(
         JOIN contentdata cd ON cd.id = e.content_data_id
         JOIN node n ON n.id = cd.node_id
         JOIN document d ON d.id = n.document_id
+        LEFT JOIN publication p ON p.id = d.publication_id
         WHERE 1=1
           -- dynamic filters below
           {doc_filter}
           {pub_filter}
           {tag_filter}
           {sect_filter}
+          {geog_filter}
         ORDER BY e.embedding_vector <=> ((:qvec)::double precision[]::vector(1536))
         LIMIT :top_k
     """
@@ -76,11 +79,51 @@ def semantic_search_nodes(
         sect_sql = "AND n.section_type = ANY(:section_type_arr)"
         sect_params = {"section_type_arr": list(section_types)}
 
+    # Geography filter: split inputs into ISO3 codes vs aggregates
+    geog_sql, geog_params = ("", {})
+    if geographies:
+        iso3_list: List[str] = []
+        agg_list: List[str] = []
+
+        for g in geographies:
+            value = getattr(g, "value", g)
+            if isinstance(value, str):
+                if value.upper() in {c.value for c in ISO3Country}:
+                    iso3_list.append(value.upper())
+                else:
+                    agg_list.append(value)
+        # Deduplicate
+        iso3_list = list(dict.fromkeys(iso3_list))
+        agg_list = list(dict.fromkeys(agg_list))
+
+        geog_clauses: List[str] = []
+        if iso3_list:
+            geog_clauses.append(
+                "EXISTS (\n"
+                "  SELECT 1 FROM jsonb_array_elements_text(p.publication_metadata->'geographical'->'iso3_country_codes') iso(code)\n"
+                "  WHERE iso.code = ANY(:iso3_arr)\n"
+                ")"
+            )
+        if agg_list:
+            geog_clauses.append(
+                "EXISTS (\n"
+                "  SELECT 1 FROM jsonb_array_elements_text(p.publication_metadata->'geographical'->'aggregates') agg(val)\n"
+                "  WHERE agg.val = ANY(:agg_arr)\n"
+                ")"
+            )
+        if geog_clauses:
+            geog_sql = "AND ( " + " OR ".join(geog_clauses) + " )"
+            if iso3_list:
+                geog_params["iso3_arr"] = iso3_list
+            if agg_list:
+                geog_params["agg_arr"] = agg_list
+
     rendered = sql.format(
         doc_filter=doc_sql,
         pub_filter=pub_sql,
         tag_filter=tag_sql,
         sect_filter=sect_sql,
+        geog_filter=geog_sql,
     )
 
     params = {
@@ -90,6 +133,7 @@ def semantic_search_nodes(
         **pub_params,
         **tag_params,
         **sect_params,
+        **geog_params,
     }
 
     rows = session.exec(text(rendered), params=params).mappings().all()
@@ -124,5 +168,9 @@ if __name__ == "__main__":
 
     # Ad hoc test
     with Session(engine) as session:
-        results = semantic_search_nodes(session, "clean cooking program", top_k=1)
+        results = semantic_search_nodes(
+            session,
+            "clean cooking program",
+            geographies=["USA", GeoAggregate.CONTINENT_AF]
+        )
         print(results)
