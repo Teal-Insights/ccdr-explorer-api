@@ -142,6 +142,269 @@ class RelationType(str, Enum):
     CROSS_REFERENCES = "CROSS_REFERENCES"
 
 
+class ISO3Country(Enum):
+    # Generated from pycountry.countries
+    ABW = "ABW"
+    AFG = "AFG"
+    AGO = "AGO"
+    AIA = "AIA"
+    ALA = "ALA"
+    ALB = "ALB"
+    AND = "AND"
+    ARE = "ARE"
+    ARG = "ARG"
+    ARM = "ARM"
+    ASM = "ASM"
+    ATA = "ATA"
+    ATF = "ATF"
+    ATG = "ATG"
+    AUS = "AUS"
+    AUT = "AUT"
+    AZE = "AZE"
+    BDI = "BDI"
+    BEL = "BEL"
+    BEN = "BEN"
+    BES = "BES"
+    BFA = "BFA"
+    BGD = "BGD"
+    BGR = "BGR"
+    BHR = "BHR"
+    BHS = "BHS"
+    BIH = "BIH"
+    BLM = "BLM"
+    BLR = "BLR"
+    BLZ = "BLZ"
+    BMU = "BMU"
+    BOL = "BOL"
+    BRA = "BRA"
+    BRB = "BRB"
+    BRN = "BRN"
+    BTN = "BTN"
+    BVT = "BVT"
+    BWA = "BWA"
+    CAF = "CAF"
+    CAN = "CAN"
+    CCK = "CCK"
+    CHE = "CHE"
+    CHL = "CHL"
+    CHN = "CHN"
+    CIV = "CIV"
+    CMR = "CMR"
+    COD = "COD"
+    COG = "COG"
+    COK = "COK"
+    COL = "COL"
+    COM = "COM"
+    CPV = "CPV"
+    CRI = "CRI"
+    CUB = "CUB"
+    CUW = "CUW"
+    CXR = "CXR"
+    CYM = "CYM"
+    CYP = "CYP"
+    CZE = "CZE"
+    DEU = "DEU"
+    DJI = "DJI"
+    DMA = "DMA"
+    DNK = "DNK"
+    DOM = "DOM"
+    DZA = "DZA"
+    ECU = "ECU"
+    EGY = "EGY"
+    ERI = "ERI"
+    ESH = "ESH"
+    ESP = "ESP"
+    EST = "EST"
+    ETH = "ETH"
+    FIN = "FIN"
+    FJI = "FJI"
+    FLK = "FLK"
+    FRA = "FRA"
+    FRO = "FRO"
+    FSM = "FSM"
+    GAB = "GAB"
+    GBR = "GBR"
+    GEO = "GEO"
+    GGY = "GGY"
+    GHA = "GHA"
+    GIB = "GIB"
+    GIN = "GIN"
+    GLP = "GLP"
+    GMB = "GMB"
+    GNB = "GNB"
+    GNQ = "GNQ"
+    GRC = "GRC"
+    GRD = "GRD"
+    GRL = "GRL"
+    GTM = "GTM"
+    GUF = "GUF"
+    GUM = "GUM"
+    GUY = "GUY"
+    HKG = "HKG"
+    HMD = "HMD"
+    HND = "HND"
+    HRV = "HRV"
+    HTI = "HTI"
+    HUN = "HUN"
+    IDN = "IDN"
+    IMN = "IMN"
+    IND = "IND"
+    IOT = "IOT"
+    IRL = "IRL"
+    IRN = "IRN"
+    IRQ = "IRQ"
+    ISL = "ISL"
+    ISR = "ISR"
+    ITA = "ITA"
+    JAM = "JAM"
+    JEY = "JEY"
+    JOR = "JOR"
+    JPN = "JPN"
+    KAZ = "KAZ"
+    KEN = "KEN"
+    KGZ = "KGZ"
+    KHM = "KHM"
+    KIR = "KIR"
+    KNA = "KNA"
+    KOR = "KOR"
+    KWT = "KWT"
+    LAO = "LAO"
+    LBN = "LBN"
+    LBR = "LBR"
+    LBY = "LBY"
+    LCA = "LCA"
+    LIE = "LIE"
+    LKA = "LKA"
+    LSO = "LSO"
+    LTU = "LTU"
+    LUX = "LUX"
+    LVA = "LVA"
+    MAC = "MAC"
+    MAF = "MAF"
+    MAR = "MAR"
+    MCO = "MCO"
+    MDA = "MDA"
+    MDG = "MDG"
+    MDV = "MDV"
+    MEX = "MEX"
+    MHL = "MHL"
+    MKD = "MKD"
+    MLI = "MLI"
+    MLT = "MLT"
+    MMR = "MMR"
+    MNE = "MNE"
+    MNG = "MNG"
+    MNP = "MNP"
+    MOZ = "MOZ"
+    MRT = "MRT"
+    MSR = "MSR"
+    MTQ = "MTQ"
+    MUS = "MUS"
+    MWI = "MWI"
+    MYS = "MYS"
+    MYT = "MYT"
+    NAM = "NAM"
+    NCL = "NCL"
+    NER = "NER"
+    NFK = "NFK"
+    NGA = "NGA"
+    NIC = "NIC"
+    NIU = "NIU"
+    NLD = "NLD"
+    NOR = "NOR"
+    NPL = "NPL"
+    NRU = "NRU"
+    NZL = "NZL"
+    OMN = "OMN"
+    PAK = "PAK"
+    PAN = "PAN"
+    PCN = "PCN"
+    PER = "PER"
+    PHL = "PHL"
+    PLW = "PLW"
+    PNG = "PNG"
+    POL = "POL"
+    PRI = "PRI"
+    PRK = "PRK"
+    PRT = "PRT"
+    PRY = "PRY"
+    PSE = "PSE"
+    PYF = "PYF"
+    QAT = "QAT"
+    REU = "REU"
+    ROU = "ROU"
+    RUS = "RUS"
+    RWA = "RWA"
+    SAU = "SAU"
+    SDN = "SDN"
+    SEN = "SEN"
+    SGP = "SGP"
+    SGS = "SGS"
+    SHN = "SHN"
+    SJM = "SJM"
+    SLB = "SLB"
+    SLE = "SLE"
+    SLV = "SLV"
+    SMR = "SMR"
+    SOM = "SOM"
+    SPM = "SPM"
+    SRB = "SRB"
+    SSD = "SSD"
+    STP = "STP"
+    SUR = "SUR"
+    SVK = "SVK"
+    SVN = "SVN"
+    SWE = "SWE"
+    SWZ = "SWZ"
+    SXM = "SXM"
+    SYC = "SYC"
+    SYR = "SYR"
+    TCA = "TCA"
+    TCD = "TCD"
+    TGO = "TGO"
+    THA = "THA"
+    TJK = "TJK"
+    TKL = "TKL"
+    TKM = "TKM"
+    TLS = "TLS"
+    TON = "TON"
+    TTO = "TTO"
+    TUN = "TUN"
+    TUR = "TUR"
+    TUV = "TUV"
+    TWN = "TWN"
+    TZA = "TZA"
+    UGA = "UGA"
+    UKR = "UKR"
+    UMI = "UMI"
+    URY = "URY"
+    USA = "USA"
+    UZB = "UZB"
+    VAT = "VAT"
+    VCT = "VCT"
+    VEN = "VEN"
+    VGB = "VGB"
+    VIR = "VIR"
+    VNM = "VNM"
+    VUT = "VUT"
+    WLF = "WLF"
+    WSM = "WSM"
+    YEM = "YEM"
+    ZAF = "ZAF"
+    ZMB = "ZMB"
+    ZWE = "ZWE"
+
+
+class GeoAggregate(str, Enum):
+    CONTINENT_AF = "continent:AF"
+    CONTINENT_AN = "continent:AN"
+    CONTINENT_AS = "continent:AS"
+    CONTINENT_EU = "continent:EU"
+    CONTINENT_NA = "continent:NA"
+    CONTINENT_OC = "continent:OC"
+    CONTINENT_SA = "continent:SA"
+
+
 class BoundingBox(SQLModel):
     """Model for bounding box coordinates with serialization support."""
     x1: float
@@ -180,6 +443,62 @@ class PositionalData(SQLModel, table=False):
         }
 
 
+class GeographicalData(SQLModel, table=False):
+    """Stores the geographies that a publication relates to.
+
+    - iso3_country_codes: zero or more ISO3 codes (validated/coerced from Enum/str)
+    - aggregates: zero or more namespaced aggregates (e.g., continent:EU)
+    """
+    iso3_country_codes: List[str] = []
+    aggregates: List[str] = []
+
+    @field_validator("iso3_country_codes", mode="before")
+    @classmethod
+    def _normalize_iso3_list(cls, v):
+        if v is None:
+            return []
+        items = v if isinstance(v, list) else [v]
+        normalized: List[str] = []
+        seen = set()
+        for item in items:
+            code = getattr(item, "value", item)
+            if not isinstance(code, str):
+                continue
+            code = code.strip().upper()
+            if not code:
+                continue
+            # If code comes as full Enum repr like ISO3Country.USA, take value above
+            if code not in seen:
+                seen.add(code)
+                normalized.append(code)
+        return normalized
+
+    @field_validator("aggregates", mode="before")
+    @classmethod
+    def _normalize_aggregates(cls, v):
+        if v is None:
+            return []
+        items = v if isinstance(v, list) else [v]
+        normalized: List[str] = []
+        seen = set()
+        for item in items:
+            value = getattr(item, "value", item)
+            if not isinstance(value, str):
+                continue
+            s = value.strip()
+            if not s:
+                continue
+            if s not in seen:
+                seen.add(s)
+                normalized.append(s)
+        return normalized
+
+
+class PublicationMetadata(SQLModel, table=False):
+    geographical: Optional[GeographicalData] = None
+    # other metadata fields
+
+
 # Define the models
 class Publication(SQLModel, table=True):
     __table_args__ = {
@@ -194,6 +513,7 @@ class Publication(SQLModel, table=True):
     source: str = Field(max_length=100)
     source_url: str = Field(max_length=500)
     uri: str = Field(max_length=500)
+    publication_metadata: Dict[str, Any] = Field(sa_column=Column("publication_metadata", JSONB))
 
     # Validators for URLs
     @field_validator("source_url", "uri")
@@ -247,6 +567,58 @@ class Publication(SQLModel, table=True):
             parts.append(url)
 
         return " ".join(parts).strip()
+
+    @field_validator("publication_metadata", mode="before")
+    @classmethod
+    def _coerce_metadata(cls, v):
+        if v is None:
+            return {}
+        if isinstance(v, PublicationMetadata):
+            return v.model_dump()
+        if isinstance(v, dict):
+            geo = v.get("geographical")
+            if isinstance(geo, GeographicalData):
+                v = dict(v)
+                v["geographical"] = geo.model_dump()
+            elif isinstance(geo, dict):
+                # normalize nested fields possibly containing Enums
+                gd = GeographicalData(**geo)
+                v = dict(v)
+                v["geographical"] = gd.model_dump()
+            return v
+        return v
+
+    @property
+    def geographical_data(self) -> Optional[GeographicalData]:
+        raw = (self.publication_metadata or {}).get("geographical")
+        if raw is None:
+            return None
+        if isinstance(raw, GeographicalData):
+            return raw
+        if isinstance(raw, dict):
+            return GeographicalData(**raw)
+        return None
+
+    @geographical_data.setter
+    def geographical_data(self, value: Optional[GeographicalData]) -> None:
+        meta = dict(self.publication_metadata or {})
+        if value is None:
+            meta.pop("geographical", None)
+        else:
+            meta["geographical"] = value.model_dump()
+        self.publication_metadata = meta
+
+    @property
+    def metadata_models(self) -> PublicationMetadata:
+        if isinstance(self.publication_metadata, PublicationMetadata):
+            return self.publication_metadata
+        if isinstance(self.publication_metadata, dict):
+            return PublicationMetadata(**self.publication_metadata)
+        return PublicationMetadata()
+
+    @metadata_models.setter
+    def metadata_models(self, value: PublicationMetadata) -> None:
+        self.publication_metadata = value.model_dump()
 
 
 class Document(SQLModel, table=True):
@@ -370,6 +742,35 @@ class Node(SQLModel, table=True):
         sa_relationship_kwargs={"foreign_keys": "Relation.target_node_id"},
         cascade_delete=True,
     )
+
+    @property
+    def positional_data_models(self) -> List[PositionalData]:
+        result: List[PositionalData] = []
+        for item in (self.positional_data or []):
+            if isinstance(item, PositionalData):
+                result.append(item)
+            elif isinstance(item, dict):
+                result.append(PositionalData(**item))
+        return result
+
+    @positional_data_models.setter
+    def positional_data_models(self, value: List[PositionalData]) -> None:
+        self.positional_data = [v.model_dump() for v in (value or [])]
+
+    @field_validator("positional_data", mode="before")
+    @classmethod
+    def _coerce_positional_data(cls, v):
+        if v is None:
+            return []
+        if isinstance(v, list):
+            out: List[Dict[str, Any]] = []
+            for item in v:
+                if isinstance(item, PositionalData):
+                    out.append(item.model_dump())
+                elif isinstance(item, dict):
+                    out.append(item)
+            return out
+        return v
 
     def to_html(
         self,
