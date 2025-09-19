@@ -14,6 +14,7 @@ def export_document_html(
     output_path: Path,
     pretty: bool,
     include_citation_data: bool,
+    include_node_ids: bool,
 ) -> Path:
     with Session(engine) as session:
         if document_id is not None:
@@ -29,6 +30,7 @@ def export_document_html(
 
         html_text: str = document.to_html(
             include_citation_data=include_citation_data,
+            include_node_ids=include_node_ids,
             include_html_wrapper=True,
             pretty=pretty,
         )
@@ -44,6 +46,7 @@ def export_node_html(
     output_path: Path,
     pretty: bool,
     include_citation_data: bool,
+    include_node_ids: bool,
 ) -> Path:
     with Session(engine) as session:
         if node_id is not None:
@@ -59,6 +62,7 @@ def export_node_html(
 
         html_fragment: str = node.to_html(
             include_citation_data=include_citation_data,
+            include_node_ids=include_node_ids,
             is_top_level=True,
             pretty=pretty,
         )
@@ -90,6 +94,11 @@ def main() -> None:
         default=Path("tests/out/document.html"),
         help="Output file path.",
     )
+    parser.add_argument(
+        "--include-ids",
+        action="store_true",
+        help="Include node IDs as id attributes on top-level elements.",
+    )
     # Descriptions are never emitted as plain text; only used as img alt text
     parser.add_argument(
         "--citation",
@@ -108,6 +117,7 @@ def main() -> None:
             output_path=output_path,
             pretty=True,
             include_citation_data=args.citation,
+            include_node_ids=args.include_ids,
         )
         print(f"Wrote node output to: {output_path}")
     else:
@@ -116,6 +126,7 @@ def main() -> None:
             output_path=args.output,
             pretty=True,
             include_citation_data=args.citation,
+            include_node_ids=args.include_ids,
         )
         print(f"Wrote document output to: {output_path}")
 
