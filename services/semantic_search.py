@@ -1,7 +1,7 @@
 # services/semantic_search.py
 from typing import Iterable, List, Optional, Tuple, TypedDict, Union
 from sqlmodel import Session, select
-from sqlalchemy import text
+from sqlalchemy import text, Column
 from db.schema import Node, ISO3Country, GeoAggregate
 
 class SearchResult(TypedDict):
@@ -139,10 +139,10 @@ def semantic_search_nodes(
     rows = session.exec(text(rendered), params=params).mappings().all()
 
     # Load nodes and render HTML
-    node_ids = [r["node_id"] for r in rows]
+    node_ids = [int(r["node_id"]) for r in rows]
     nodes_by_id = {}
     if node_ids:
-        nodes = session.exec(select(Node).where(Node.id.in_(node_ids))).all()
+        nodes = session.exec(select(Node).where(Column(Node.id).in_(node_ids))).all()
         nodes_by_id = {n.id: n for n in nodes}
 
     results: List[SearchResult] = []

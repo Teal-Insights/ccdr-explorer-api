@@ -131,7 +131,7 @@ def _assert_target_empty(prod_conn: Connection, table_names: Sequence[str]) -> N
         raise RuntimeError(f"Target database is not empty for: {', '.join(non_empty)}")
 
 @contextmanager
-def _connect(engine: Engine) -> Iterable[Connection]:
+def _connect(engine: Engine):
     with engine.connect() as conn:
         yield conn
 

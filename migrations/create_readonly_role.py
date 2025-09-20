@@ -88,6 +88,8 @@ def main() -> None:
     args = parser.parse_args()
 
     db_name = os.getenv("POSTGRES_DB")
+    if not db_name:
+        raise RuntimeError("POSTGRES_DB is not set in the environment")
     sql = build_sql(db_name=db_name, role=args.role, password=args.password)
 
     if args.dry_run:

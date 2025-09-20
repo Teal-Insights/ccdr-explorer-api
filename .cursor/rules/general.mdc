@@ -1,0 +1,10 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+The project uses `uv` for package management. Add dependencies with `uv add`, and never use conditional import patterns.
+
+This is a statically typed Python project. Accordingly, attributes should always be accessed directly, never through `getattr()`.
+
+We mostly want to make sure the code fails fast and/or actually works correctly rather than wrapping everything in half-assed fallbacks.

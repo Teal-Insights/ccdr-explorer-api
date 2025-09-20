@@ -18,9 +18,9 @@ import argparse
 import json
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-from sqlalchemy import select, update
+from sqlalchemy import update
 from sqlalchemy.exc import SQLAlchemyError
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from db.db import engine, get_database_url
 from db.schema import Node
@@ -188,8 +188,8 @@ def _iter_target_nodes(session: Session, document_id: Optional[int]) -> Iterable
     if document_id is not None:
         stmt = stmt.where(Node.document_id == document_id)
     # We do not add an IS NOT NULL filter to also normalize string/invalid forms
-    for row in session.exec(stmt):
-        yield row[0], row[1]
+    for node_id, pd in session.exec(stmt):
+        yield node_id, pd
 
 
 def aggregate_migration(document_id: Optional[int], dry_run: bool) -> Tuple[int, int, int]:

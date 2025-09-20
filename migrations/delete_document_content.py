@@ -6,7 +6,7 @@ The Publication and Document records remain intact.
 
 import argparse
 import sys
-from sqlmodel import Session, select, delete
+from sqlmodel import Session, select, delete, Column
 from db.db import engine
 from db.schema import ContentData, Embedding, Node
 
@@ -45,9 +45,9 @@ def delete_document_content(document_id: int) -> tuple[int, int]:
         # Now delete all ContentData records
         # We can't use a simple join in the delete statement with SQLModel,
         # so we delete by IDs
-        content_data_ids = [cd.id for cd in content_data_records]
+        content_data_ids = [cd.id for cd in content_data_records if cd.id is not None]
         if content_data_ids:
-            delete_stmt = delete(ContentData).where(ContentData.id.in_(content_data_ids))
+            delete_stmt = delete(ContentData).where(Column(ContentData.id).in_(content_data_ids))
             session.exec(delete_stmt)
         
         # Commit the transaction

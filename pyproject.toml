@@ -15,9 +15,12 @@ dependencies = [
     "pgvector>=0.3.3",
     "pycountry>=24.6.1",
     "bleach>=6.2.0",
+    "citeproc-py>=0.9.0",
+    "citeproc-py-styles>=0.1.5",
 ]
 
 [dependency-groups]
 dev = [
     "pytest>=8.4.1",
+    "ty>=0.0.1a21",
 ]
